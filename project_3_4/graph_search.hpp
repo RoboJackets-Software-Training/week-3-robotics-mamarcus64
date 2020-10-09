@@ -5,7 +5,7 @@
 #include <queue>
 #include <stack>
 #include <unistd.h>
-
+using namespace std;
 struct Node
 {
     std::string name;
@@ -99,25 +99,38 @@ public:
         // Mark the start node as visited and enqueue it
         visited.insert(startNode_);
         queue.push(std::vector<Node *>{startNode_});
-
         while (!queue.empty())
         {
-            // IMPLEMENT CODE HERE!
-
+            vector<Node*> current = queue.front();
+            queue.pop();
+            Node* last = current[current.size() - 1];
             // Dequeued front path from queue (get and delete from queue)
             // Get path's last node (current node)
-
+            if (last == exitNode_) {
+                return current;
+            }
             // Leave if current node is exit node
             // DEBUGGING: Iterate though nodes in solution path and set path grid cells (grid_) to "+" and print grid (displayGrid)
-
+            for (Node* node : current) {
+                grid_[node->r][node->c] = "+";
+            }
             // Get all adjacent nodes of the current node (use currNode->neighbors)
             // If an adjacent has not been visited (not in visited set),
             // mark it as visited and enqueue its path (copy current path. add the adjacent node, add to queue)
             // DEBUGGING: Set visited cell in grid to "*" so they are different color when displaying
-
+            for (Node* neighbor : last->neighbors) {
+                if (!visited.contains(neighbor)) {
+                    visited.insert(neighbor);
+                    grid_[neighbor->r][neighbor->c] = "*";
+                    vector<Node*> copiedPath = current;
+                    copiedPath.push_back(neighbor);
+                    queue.push(copiedPath);
+                }
+            }
             // Print grid for debugging
             if (verbose)
             {
+                cout << queue.size() << endl;
                 displayGrid();
                 usleep(TIME_DELAY);
             }
